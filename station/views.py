@@ -12,7 +12,6 @@ from station.models import (
     Crew,
     Journey,
     Order,
-    Ticket,
 )
 
 from station.serializers import (
@@ -22,9 +21,13 @@ from station.serializers import (
     TrainSerializer,
     CrewSerializer,
     JourneySerializer,
-    TicketSerializer,
     OrderSerializer,
 )
+
+
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 100
 
 
 class StationViewSet(
@@ -35,14 +38,42 @@ class StationViewSet(
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
-
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            "source",
+            type=OpenApiTypes.STR,
+            description="Filter by source station name",
+        ),
+        OpenApiParameter(
+            "destination",
+            type=OpenApiTypes.STR,
+            description="Filter by destination station name",
+        ),
+    ]
+)
 class RouteViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Route.objects.select_related("source", "destination")
+    queryset = Route.objects.all()
     serializer_class = RouteSerializer
+    pagination_class = OrderPagination
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+
+        if source:
+            queryset = queryset.filter(source__name__icontains=source)
+
+        if destination:
+            queryset = queryset.filter(destination__name__icontains=destination)
+
+        return queryset.distinct()
 
 
 class TrainTypeViewSet(
@@ -83,6 +114,7 @@ class JourneyViewSet(
         .prefetch_related("crew")
     )
     serializer_class = JourneySerializer
+    pagination_class = OrderPagination
 
     def get_queryset(self):
         queryset = self.queryset
@@ -92,7 +124,7 @@ class JourneyViewSet(
         date = self.request.query_params.get("date")
 
         if source:
-            queryset = queryset.filter(route__sourse__name__icontains=source)
+            queryset = queryset.filter(route__source__name__icontains=source)
         if destination:
             queryset = queryset.filter(route__destination__name__icontains=destination)
         if date:
@@ -122,10 +154,6 @@ class JourneyViewSet(
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
-
-class OrderPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 100
 
 
 class OrderViewSet(
