@@ -51,6 +51,7 @@ class Journey(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE)
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
+    crew = models.ManyToManyField(Crew, related_name="journeys")
 
     class Meta:
         ordering = ["-departure_time"]
