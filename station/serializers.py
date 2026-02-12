@@ -58,8 +58,8 @@ class JourneySerializer(serializers.ModelSerializer):
             "route",
             "train",
             "departure_time",
-            "arrival_time"
-            "crew"
+            "arrival_time",
+            "crew",
         )
 
 

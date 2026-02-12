@@ -1,6 +1,5 @@
-from django.urls import include, path
+from django.urls import path, include
 from rest_framework import routers
-
 from station.views import (
     StationViewSet,
     RouteViewSet,
@@ -20,8 +19,6 @@ router.register("crews", CrewViewSet)
 router.register("journeys", JourneyViewSet)
 router.register("orders", OrderViewSet)
 
-urlpatterns = [
-    path("", include(router.urls)),
-]
+urlpatterns = [path("", include(router.urls))]
 
 app_name = "station"
