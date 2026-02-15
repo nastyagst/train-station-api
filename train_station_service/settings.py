@@ -75,11 +75,16 @@ WSGI_APPLICATION = "train_station_service.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+import os
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME", "station_db"),
+        "USER": os.environ.get("DB_USER", "station_admin"),
+        "PASSWORD": os.environ.get("DB_PASS", "station_secret_pass"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": "5432",
     }
 }
 
