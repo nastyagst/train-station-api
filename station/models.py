@@ -93,17 +93,18 @@ class Ticket(models.Model):
             })
 
     def clean(self):
-        Ticket.validate_ticket(
-            self.cargo,
-            self.seat,
-            self.journey.train,
-            ValidationError
-        )
+        if self.journey and hasattr(self.journey, "train"):
+            Ticket.validate_ticket(
+                self.cargo,
+                self.seat,
+                self.journey.train,
+                ValidationError
+            )
 
     def save(self, *args, **kwargs):
         self.full_clean()
         super(Ticket, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"str{(self.journey)} (cargo: {self.cargo}, seat: {self.seat}"
+        return f"str{self.journey} (cargo: {self.cargo}, seat: {self.seat})"
 

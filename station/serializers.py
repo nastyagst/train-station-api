@@ -65,11 +65,12 @@ class JourneySerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
-        data = super(TrainSerializer, self).validate(attrs)
+        data = super(TicketSerializer, self).validate(attrs)
+        journey = attrs.get("journey")
         Ticket.validate_ticket(
             attrs["cargo"],
             attrs["seat"],
-            attrs["journey"].train,
+            journey.train,
             ValidationError
         )
         return data
