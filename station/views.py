@@ -22,6 +22,7 @@ from station.serializers import (
     CrewSerializer,
     JourneySerializer,
     OrderSerializer,
+    JourneyListSerializer,
 )
 
 
@@ -110,7 +111,7 @@ class JourneyViewSet(
 ):
     queryset = (
         Journey.objects.all()
-        .select_related("route", "train")
+        .select_related("route__source", "route__destination", "train")
         .prefetch_related("crew")
     )
     serializer_class = JourneySerializer
@@ -131,6 +132,11 @@ class JourneyViewSet(
             queryset = queryset.filter(departure_time__date=date)
 
         return queryset.distinct()
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return JourneyListSerializer
+        return JourneySerializer
 
     @extend_schema(
         parameters=[
