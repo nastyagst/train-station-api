@@ -58,10 +58,10 @@ class StationListSerializer(serializers.ModelSerializer):
 
 class RouteListSerializer(serializers.ModelSerializer):
     source = serializers.SlugRelatedField(
-        any_field=True, read_only=True, slug_field="name"
+        read_only=True, slug_field="name"
     )
     destination = serializers.SlugRelatedField(
-        any_field=True, read_only=True, slug_field="name"
+        read_only=True, slug_field="name"
     )
 
     class Meta:
@@ -71,7 +71,7 @@ class RouteListSerializer(serializers.ModelSerializer):
 
 class TrainListSerializer(serializers.ModelSerializer):
     train_type = serializers.SlugRelatedField(
-        any_field=True, read_only=True, slug_field="name"
+        read_only=True, slug_field="name"
     )
 
     class Meta:
@@ -86,14 +86,17 @@ class TrainListSerializer(serializers.ModelSerializer):
 
 
 class JourneyListSerializer(serializers.ModelSerializer):
-    route_name = serializers.SlugRelatedField(
-        source="route.__str__", read_only=True
+    route_name = serializers.CharField(
+        source="route.__str__",
+        read_only=True
     )
-    train_name = serializers.SlugRelatedField(
-        source="train.name", read_only=True
+    train_name = serializers.CharField(
+        source="train.name",
+        read_only=True
     )
-    train_capacity = serializers.SlugRelatedField(
-        source="train.capacity", read_only=True
+    train_capacity = serializers.IntegerField(
+        source="train.capacity",
+        read_only=True
     )
     tickets_available = serializers.IntegerField(read_only=True)
 
@@ -101,11 +104,12 @@ class JourneyListSerializer(serializers.ModelSerializer):
         model = Journey
         fields = (
             "id",
-            "route",
-            "train",
             "departure_time",
             "arrival_time",
-            "crew",
+            "route_name",
+            "train_name",
+            "train_capacity",
+            "tickets_available",
         )
 
 

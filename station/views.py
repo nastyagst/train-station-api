@@ -23,6 +23,7 @@ from station.serializers import (
     JourneySerializer,
     OrderSerializer,
     JourneyListSerializer,
+    RouteListSerializer,
 )
 
 
@@ -58,9 +59,14 @@ class RouteViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Route.objects.all()
+    queryset = Route.objects.select_related("source", "destination")
     serializer_class = RouteSerializer
     pagination_class = OrderPagination
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return RouteListSerializer
+        return RouteSerializer
 
     def get_queryset(self):
         queryset = self.queryset
