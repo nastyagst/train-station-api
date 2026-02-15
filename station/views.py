@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from station.permissions import IsAdminOrIfAuthenticatedReadOnly
 
 from station.models import (
     Station,
@@ -24,6 +25,7 @@ from station.serializers import (
     OrderSerializer,
     JourneyListSerializer,
     RouteListSerializer,
+    TrainListSerializer,
 )
 
 
@@ -97,8 +99,13 @@ class TrainViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Train.objects.select_related("train_type")
-    serializer_class = TrainSerializer
+    queryset = Train.objects.select_related("train_type").order_by("id")
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TrainListSerializer
+        return TrainSerializer
 
 
 class CrewViewSet(
