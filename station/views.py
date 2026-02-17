@@ -1,3 +1,4 @@
+from django.db.models import F, Count
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
@@ -120,18 +121,28 @@ class CrewViewSet(
 class JourneyViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = (
-        Journey.objects.all()
-        .select_related("route__source", "route__destination", "train")
-        .prefetch_related("crew")
-    )
+    queryset = Journey.objects.all()
     serializer_class = JourneySerializer
     pagination_class = OrderPagination
 
     def get_queryset(self):
         queryset = self.queryset
+
+        if self.action == "list":
+            queryset = (
+                queryset
+                .select_related("route__source", "route__destination", "train")
+                .prefetch_related("crew")
+                .annotate(
+                    tickets_available=(
+                            F("train__cargo_num") * F("train__places_in_cargo")
+                            - Count("tickets")
+                    )
+                )
+            )
 
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
@@ -139,8 +150,10 @@ class JourneyViewSet(
 
         if source:
             queryset = queryset.filter(route__source__name__icontains=source)
+
         if destination:
             queryset = queryset.filter(route__destination__name__icontains=destination)
+
         if date:
             queryset = queryset.filter(departure_time__date=date)
 
@@ -149,6 +162,10 @@ class JourneyViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return JourneyListSerializer
+
+        if self.action == "retrieve":
+            return JourneyListSerializer
+
         return JourneySerializer
 
     @extend_schema(
@@ -156,23 +173,22 @@ class JourneyViewSet(
             OpenApiParameter(
                 "source",
                 type=OpenApiTypes.STR,
-                description="Filter by source station name.",
+                description="Filter by source station name (ex. ?source=Kyiv)",
             ),
             OpenApiParameter(
                 "destination",
                 type=OpenApiTypes.STR,
-                description="Filter by destination station name."
+                description="Filter by destination station name (ex. ?destination=Lviv)",
             ),
             OpenApiParameter(
                 "date",
                 type=OpenApiTypes.DATE,
-                description="Filter by date."
+                description="Filter by departure date (ex. ?date=2026-02-17)",
             ),
         ]
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
-
 
 
 class OrderViewSet(
