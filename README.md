@@ -53,9 +53,7 @@ To run tests inside the Docker container:
 4. **Create Route** (Kyiv -> Lviv).
 5. **Create Train** (Define capacity and type).
 6. **Create Journey** (Assign a Train to a Route at a specific time).
+7. **Buy Tickets** (Create an Order with selected seats).
 
-<img width="557" height="424" alt="{C8534120-7B74-4EB9-B486-B6EE2CA9C24F}" src="https://github.com/user-attachments/assets/83aebcf9-42d8-488f-81e4-2f8e25c38ace" />
-
-
-8. **Buy Tickets** (Create an Order with selected seats).
+<img width="555" height="415" alt="{69A00BA9-2085-47B9-BD21-2CCFBFBCD901}" src="https://github.com/user-attachments/assets/92866924-e0d5-4adc-a7c9-d3766a964b0d" />
 
