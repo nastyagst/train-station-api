@@ -36,8 +36,8 @@ Written in Python using Django REST Framework.
     docker-compose up --build
 
 4. **Access the API:**
-   - **API Root**: http://127.0.0.1:8000/api/station/
-   - **Swagger Docs**: http://127.0.0.1:8000/api/doc/swagger/
+   - **API Root**: http://127.0.0.1:8002/api/station/
+   - **Swagger Docs**: http://127.0.0.1:8002/api/doc/swagger/
 
 ## Running Tests 
 
@@ -53,4 +53,5 @@ To run tests inside the Docker container:
 4. **Create Route** (Kyiv -> Lviv).
 5. **Create Train** (Define capacity and type).
 6. **Create Journey** (Assign a Train to a Route at a specific time).
+
 7. **Buy Tickets** (Create an Order with selected seats).
