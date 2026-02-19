@@ -54,4 +54,8 @@ To run tests inside the Docker container:
 5. **Create Train** (Define capacity and type).
 6. **Create Journey** (Assign a Train to a Route at a specific time).
 
-7. **Buy Tickets** (Create an Order with selected seats).
+<img width="557" height="424" alt="{C8534120-7B74-4EB9-B486-B6EE2CA9C24F}" src="https://github.com/user-attachments/assets/83aebcf9-42d8-488f-81e4-2f8e25c38ace" />
+
+
+8. **Buy Tickets** (Create an Order with selected seats).
+
